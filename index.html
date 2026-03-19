@@ -1,0 +1,2015 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Avaliação de Atendimento · meutudo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Paleta meutudo */
+      --magenta: #d22688;
+      --magenta-dark: #a81d6d;
+      --preto: #000000;
+      --cinza-escuro: #282828;
+      --cinza-claro: #f0f0f0;
+      --branco: #ffffff;
+
+      /* Paleta interna */
+      --azul: #007dc3;
+      --roxo: #4f3f91;
+      --pink: #d71286;
+      --rosa-claro: #ea66b1;
+      --laranja: #ef9424;
+
+      /* Derivados funcionais */
+      --magenta-light: rgba(210,38,136,0.08);
+      --roxo-light: rgba(79,63,145,0.08);
+      --azul-light: rgba(0,125,195,0.08);
+      --laranja-light: rgba(239,148,36,0.10);
+      --verde: #1a9e5c;
+      --verde-light: rgba(26,158,92,0.08);
+
+      --cinza-medio: #5a5a5a;
+      --cinza-borda: #dedede;
+
+      --sombra: 0 2px 8px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --sombra-hover: 0 8px 24px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.06);
+      --radius: 14px;
+      --radius-sm: 8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--cinza-claro);
+      color: var(--cinza-escuro);
+      min-height: 100vh;
+      padding: 32px 16px 80px;
+    }
+
+    /* ── BARRA LATERAL DE PROGRESSO ── */
+    .progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 4px;
+      height: 100vh;
+      background: var(--cinza-borda);
+      z-index: 100;
+    }
+    .progress-fill {
+      width: 100%;
+      height: 0%;
+      background: linear-gradient(180deg, var(--magenta), var(--roxo));
+      transition: height 0.4s ease;
+      border-radius: 0 2px 2px 0;
+    }
+
+    /* ── CONTAINER ── */
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    /* ── CABEÇALHO ── */
+    .header {
+      background: var(--branco);
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      box-shadow: var(--sombra);
+      margin-bottom: 20px;
+      border-top: 4px solid var(--magenta);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::after {
+      content: '';
+      position: absolute;
+      right: -40px; top: -40px;
+      width: 160px; height: 160px;
+      background: radial-gradient(circle, rgba(210,38,136,0.07) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(79,63,145,0.08);
+      color: var(--roxo);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+
+    .header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--cinza-escuro);
+      line-height: 1.3;
+    }
+
+    .header p {
+      color: var(--cinza-medio);
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    /* ── CAMPOS INICIAIS ── */
+    .card {
+      background: var(--branco);
+      border-radius: var(--radius);
+      padding: 24px 32px;
+      box-shadow: var(--sombra);
+      margin-bottom: 16px;
+    }
+
+    .field-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--cinza-medio);
+      letter-spacing: 0.02em;
+    }
+
+    .field input {
+      padding: 11px 14px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--cinza-borda);
+      font-family: 'Nunito', sans-serif;
+      font-size: 14px;
+      color: var(--cinza-escuro);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      background: var(--cinza-claro);
+    }
+
+    .field input:focus {
+      outline: none;
+      border-color: var(--magenta);
+      box-shadow: 0 0 0 3px rgba(210,38,136,0.10);
+      background: var(--branco);
+    }
+
+    .field input.valido {
+      border-color: var(--magenta);
+      background: var(--branco);
+    }
+
+    .erro {
+      font-size: 12px;
+      color: var(--magenta);
+      font-weight: 500;
+      min-height: 16px;
+    }
+
+    .btn-avaliar {
+      margin-top: 20px;
+      padding: 13px 28px;
+      background: var(--magenta);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Nunito', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      display: none;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 14px rgba(210,38,136,0.30);
+    }
+
+    .btn-avaliar:hover {
+      background: var(--magenta-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(210,38,136,0.36);
+    }
+
+    .btn-avaliar:active { transform: translateY(0); }
+
+    /* ── PAINEL DE NOTA ── */
+    .nota-panel {
+      display: none;
+      background: var(--branco);
+      border-radius: var(--radius);
+      padding: 20px 32px;
+      box-shadow: var(--sombra);
+      margin-bottom: 20px;
+      position: sticky;
+      top: 12px;
+      z-index: 50;
+      border: 1.5px solid var(--cinza-borda);
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .nota-panel.visivel { display: flex; }
+
+    .nota-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nota-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--cinza-medio);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .nota-valor {
+      font-family: 'Nunito', monospace;
+      font-size: 32px;
+      font-weight: 500;
+      line-height: 1;
+      transition: color 0.4s;
+    }
+
+    .nota-valor.alta { color: var(--magenta); }
+    .nota-valor.media { color: var(--laranja); }
+    .nota-valor.baixa { color: var(--magenta); }
+    .nota-valor.zerada { color: var(--cinza-medio); }
+
+    .nota-detalhes {
+      font-size: 12px;
+      color: var(--cinza-medio);
+      margin-top: 2px;
+    }
+
+    .nota-gauge {
+      flex: 1;
+      max-width: 200px;
+    }
+
+    .gauge-track {
+      height: 8px;
+      background: var(--cinza-borda);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .gauge-fill {
+      height: 100%;
+      border-radius: 4px;
+      width: 0%;
+      transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.4s;
+    }
+
+    .gauge-fill.alta { background: linear-gradient(90deg, var(--magenta), var(--rosa-claro)); }
+    .gauge-fill.media { background: linear-gradient(90deg, var(--laranja), #f9c784); }
+    .gauge-fill.baixa { background: linear-gradient(90deg, var(--laranja), var(--rosa-claro)); }
+    .gauge-fill.zerada { background: var(--cinza-borda); }
+
+    .gauge-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--cinza-borda);
+      margin-top: 4px;
+      font-family: 'Nunito', monospace;
+    }
+
+    /* ── BLOCO DE AVALIAÇÃO ── */
+    .avaliacao-bloco {
+      display: none;
+    }
+
+    .secao-titulo {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--cinza-medio);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin: 24px 0 12px;
+      padding-left: 4px;
+    }
+
+    /* ── ITEM ── */
+    .avaliacao-item {
+      background: var(--branco);
+      border: 1.5px solid var(--cinza-borda);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 12px;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+
+    .avaliacao-item:hover { box-shadow: var(--sombra-hover); }
+
+    .avaliacao-item.respondido-sim { border-left: 4px solid var(--magenta); }
+    .avaliacao-item.respondido-nao { border-left: 4px solid var(--laranja); }
+    .avaliacao-item.respondido-na  { border-left: 4px solid var(--azul); }
+
+    .avaliacao-item.zerar {
+      border-color: var(--laranja);
+      background: var(--laranja-light);
+    }
+
+    /* ZERADO */
+    .avaliacao-item.item-zerado {
+      opacity: 0.45;
+      pointer-events: none;
+    }
+
+    /* ── HEADER DO ITEM ── */
+    .avaliacao-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .item-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .item-num {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--cinza-claro);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--cinza-medio);
+      flex-shrink: 0;
+      font-family: 'Nunito', monospace;
+    }
+
+    .respondido-sim .item-num { background: var(--magenta-light); color: var(--magenta); }
+    .respondido-nao .item-num { background: var(--laranja-light); color: var(--laranja); }
+    .respondido-na  .item-num { background: var(--azul-light); color: var(--azul); }
+
+    .item-titulo-wrap { flex: 1; }
+
+    .avaliacao-header h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--cinza-escuro);
+      line-height: 1.4;
+    }
+
+    .item-peso {
+      font-size: 11px;
+      color: var(--cinza-medio);
+      font-family: 'Nunito', monospace;
+      margin-top: 2px;
+    }
+
+    .toggle-desc {
+      background: var(--cinza-claro);
+      border: none;
+      border-radius: 6px;
+      width: 30px; height: 30px;
+      font-size: 14px;
+      cursor: pointer;
+      color: var(--roxo);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+
+    .toggle-desc:hover { background: var(--roxo-light); }
+
+    /* ── OPÇÕES SIM/NÃO/NA ── */
+    .avaliacao-opcoes {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .opcao {
+      padding: 8px 18px;
+      border-radius: 20px;
+      border: 1.5px solid var(--cinza-borda);
+      background: var(--branco);
+      cursor: pointer;
+      font-family: 'Nunito', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.18s;
+      color: var(--cinza-medio);
+    }
+
+    .opcao:hover { border-color: var(--magenta); color: var(--magenta); }
+
+    .opcao.sim.ativa  { background: var(--magenta); border-color: var(--magenta); color: #fff; }
+    .opcao.nao.ativa  { background: var(--laranja); border-color: var(--laranja); color: #fff; }
+    .opcao.na.ativa   { background: var(--azul); border-color: var(--azul); color: #fff; }
+
+    /* CSAT */
+    .csat-opcoes { flex-wrap: wrap; gap: 8px; }
+
+    .opcao.csat {
+      min-width: 44px;
+      font-weight: 700;
+      font-family: 'Nunito', monospace;
+      text-align: center;
+    }
+
+    .opcao.csat.detrator.ativa  { background: var(--laranja); border-color: var(--laranja); color: #fff; }
+    .opcao.csat.positivo.ativa  { background: var(--magenta); border-color: var(--magenta); color: #fff; }
+    .opcao.csat.neutro.ativa    { background: var(--azul); border-color: var(--azul); color: #fff; }
+    .opcao.csat.nresp.ativa     { background: var(--cinza-medio); border-color: var(--cinza-medio); color: #fff; }
+
+    /* ── DESCRIÇÃO ── */
+    .avaliacao-descricao {
+      display: none;
+      margin-top: 16px;
+      padding: 16px;
+      background: var(--cinza-claro);
+      border-radius: var(--radius-sm);
+      font-size: 13.5px;
+      color: var(--cinza-medio);
+      line-height: 1.6;
+    }
+
+    .avaliacao-descricao p { margin-bottom: 8px; }
+    .avaliacao-descricao p:last-child { margin-bottom: 0; }
+    .avaliacao-descricao strong { color: var(--cinza-escuro); }
+
+    .avaliacao-descricao ul {
+      padding-left: 16px;
+      margin-top: 4px;
+    }
+
+    .avaliacao-descricao li { margin-bottom: 4px; }
+
+    /* ── SUBITENS ── */
+    .avaliacao-subitens {
+      display: none;
+      margin-top: 16px;
+      padding: 16px;
+      background: #fffaf5;
+      border: 1px solid rgba(239,148,36,0.20);
+      border-radius: var(--radius-sm);
+    }
+
+    .avaliacao-subitens p {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--cinza-escuro);
+      margin-bottom: 10px;
+    }
+
+    .avaliacao-subitens label {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13.5px;
+      color: var(--cinza-medio);
+      padding: 7px 0;
+      border-bottom: 1px solid #f5e8d8;
+      cursor: pointer;
+      transition: color 0.15s;
+      font-weight: 400;
+    }
+
+    .avaliacao-subitens label:last-child { border-bottom: none; }
+    .avaliacao-subitens label:hover { color: var(--cinza-escuro); }
+
+    .avaliacao-subitens input[type="checkbox"] {
+      width: 16px; height: 16px;
+      accent-color: var(--laranja);
+      flex-shrink: 0;
+      margin-top: 2px;
+      cursor: pointer;
+    }
+
+    .avaliacao-subitens input[type="radio"] {
+      width: 16px; height: 16px;
+      accent-color: var(--roxo);
+      flex-shrink: 0;
+      margin-top: 2px;
+      cursor: pointer;
+    }
+
+    /* ── OBSERVAÇÃO ── */
+    .observacao-item {
+      display: none;
+      margin-top: 14px;
+    }
+
+    .observacao-item label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--cinza-medio);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .observacao-item textarea {
+      width: 100%;
+      min-height: 76px;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--cinza-borda);
+      font-family: 'Nunito', sans-serif;
+      font-size: 13.5px;
+      color: var(--cinza-escuro);
+      resize: vertical;
+      background: var(--cinza-claro);
+      transition: border-color 0.2s;
+    }
+
+    .observacao-item textarea:focus {
+      outline: none;
+      border-color: var(--roxo);
+      background: var(--branco);
+      box-shadow: 0 0 0 3px rgba(79,63,145,0.08);
+    }
+
+    /* ── ZERAMENTO ── */
+    .zerar-opcoes {
+      display: none;
+      margin-top: 14px;
+    }
+
+    .zerar-opcoes label {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13.5px;
+      color: var(--laranja);
+      padding: 8px 0;
+      border-bottom: 1px dashed #f9c784;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .zerar-opcoes label:last-child { border-bottom: none; }
+
+    .zerar-opcoes input[type="checkbox"] {
+      width: 16px; height: 16px;
+      accent-color: var(--laranja);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* ── CORREÇÃO TICKET ── */
+    .correcao-campo {
+      display: none;
+      margin: 8px 0 4px 26px;
+    }
+
+    .correcao-campo label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--cinza-medio);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .correcao-campo select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--cinza-borda);
+      font-family: 'Nunito', sans-serif;
+      font-size: 13.5px;
+      color: var(--cinza-escuro);
+      background: var(--branco);
+      transition: border-color 0.2s;
+    }
+
+    .correcao-campo select:focus {
+      outline: none;
+      border-color: var(--roxo);
+      box-shadow: 0 0 0 3px rgba(79,63,145,0.08);
+    }
+
+    /* ── CSAT IMPACTO ── */
+    .csat-impacto {
+      display: none;
+      margin-top: 14px;
+      padding: 14px;
+      background: rgba(239,148,36,0.08);
+      border: 1px solid rgba(239,148,36,0.20);
+      border-radius: var(--radius-sm);
+    }
+
+    .csat-impacto p {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--cinza-escuro);
+      margin-bottom: 10px;
+    }
+
+    .csat-impacto label {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--cinza-medio);
+      padding: 6px 0;
+      cursor: pointer;
+      font-weight: 400;
+    }
+
+    .csat-impacto input[type="radio"] {
+      width: 16px; height: 16px;
+      accent-color: var(--laranja);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* ── BOTÃO FINALIZAR ── */
+    .btn-finalizar {
+      display: none;
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, var(--magenta), var(--roxo));
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Nunito', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 24px;
+      transition: opacity 0.2s, transform 0.15s;
+      box-shadow: 0 6px 20px rgba(210,38,136,0.30);
+      letter-spacing: 0.02em;
+    }
+
+    .btn-finalizar:hover { opacity: 0.92; transform: translateY(-1px); }
+    .btn-finalizar:active { transform: translateY(0); }
+
+    /* ── MODAL DE RESULTADO ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(26,26,46,0.55);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-overlay.visivel { display: flex; }
+
+    .modal {
+      background: var(--branco);
+      border-radius: 20px;
+      padding: 36px 32px 28px;
+      max-width: 520px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 24px 60px rgba(26,26,46,0.25);
+      animation: modalIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.92) translateY(12px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal-nota-grande {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .modal-nota-grande .nota-circulo {
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      font-family: 'Nunito', monospace;
+      font-size: 30px;
+      font-weight: 500;
+    }
+
+    .nota-circulo.alta  { background: var(--magenta-light); color: var(--magenta); border: 3px solid var(--magenta); }
+    .nota-circulo.media { background: var(--laranja-light); color: var(--laranja); border: 3px solid var(--laranja); }
+    .nota-circulo.baixa { background: rgba(210,38,136,0.08); color: var(--magenta); border: 3px solid var(--magenta); }
+    .nota-circulo.zerada { background: var(--cinza-claro); color: var(--cinza-medio); border: 3px solid #ccc; }
+
+    .modal-nota-label {
+      font-size: 13px;
+      color: var(--cinza-medio);
+    }
+
+    .modal-divider {
+      height: 1px;
+      background: var(--cinza-borda);
+      margin: 20px 0;
+    }
+
+    .modal-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--cinza-medio);
+      margin-bottom: 12px;
+    }
+
+    .resumo-itens {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .resumo-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      background: var(--cinza-claro);
+    }
+
+    .resumo-item-nome { color: var(--cinza-medio); }
+    .resumo-item-valor { font-weight: 600; font-family: 'Nunito', monospace; font-size: 13px; }
+    .resumo-item-valor.sim  { color: var(--magenta); }
+    .resumo-item-valor.nao  { color: var(--laranja); }
+    .resumo-item-valor.na   { color: var(--azul); }
+    .resumo-item-valor.pen  { color: var(--cinza-borda); }
+
+    .modal-acoes {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .btn-modal {
+      flex: 1;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      border: none;
+      font-family: 'Nunito', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+
+    .btn-modal.primario {
+      background: var(--magenta);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(210,38,136,0.25);
+    }
+
+    .btn-modal.primario:hover { background: var(--magenta-dark); }
+
+    .btn-modal.secundario {
+      background: var(--cinza-claro);
+      color: var(--cinza-escuro);
+      border: 1.5px solid var(--cinza-borda);
+    }
+
+    .btn-modal.secundario:hover { background: var(--cinza-borda); }
+
+    .json-preview {
+      display: none;
+      margin-top: 16px;
+      background: #282828;
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .json-preview pre {
+      font-family: 'Nunito', monospace;
+      font-size: 11px;
+      color: var(--rosa-claro);
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* ── ALERTA INCOMPLETO ── */
+    .alerta-incompleto {
+      display: none;
+      background: rgba(210,38,136,0.07);
+      border: 1.5px solid rgba(210,38,136,0.2);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--magenta);
+      font-weight: 500;
+      margin-top: 12px;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      body { padding: 16px 12px 80px; }
+      .header, .card { padding: 20px 18px; }
+      .avaliacao-item { padding: 16px 18px; }
+      .field-group { grid-template-columns: 1fr; }
+      .nota-panel { flex-direction: column; align-items: flex-start; }
+      .modal { padding: 28px 20px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-badge">quality experience · meutudo</div>
+    <h1>Avaliação de atendimento</h1>
+    <p>Preencha os dados do atendimento para iniciar a avaliação.</p>
+  </div>
+
+  <!-- CAMPOS INICIAIS -->
+  <div class="card">
+    <div class="field-group">
+      <div class="field">
+        <label>E-mail do expert</label>
+        <input type="email" id="expert" placeholder="nome@meutudo.app" oninput="validarInicio()">
+        <div id="erroExpert" class="erro"></div>
+      </div>
+      <div class="field">
+        <label>Ticket ID</label>
+        <input type="text" id="ticket" placeholder="Ex: TK-00001" oninput="validarInicio()">
+      </div>
+      <div class="field">
+        <label>Person ID</label>
+        <input type="text" id="person" placeholder="Ex: 123456" oninput="validarInicio()">
+      </div>
+    </div>
+    <button id="btnAvaliar" class="btn-avaliar" onclick="iniciarAvaliacao()">Iniciar avaliação →</button>
+  </div>
+
+  <!-- NOTA STICKY -->
+  <div class="nota-panel" id="notaPanel">
+    <div class="nota-info">
+      <div class="nota-label">Nota parcial</div>
+      <div class="nota-valor zerada" id="notaValor">—</div>
+      <div class="nota-detalhes" id="notaDetalhes">Nenhum item respondido</div>
+    </div>
+    <div class="nota-gauge">
+      <div class="gauge-track">
+        <div class="gauge-fill zerada" id="gaugeFill"></div>
+      </div>
+      <div class="gauge-labels"><span>0</span><span>50</span><span>100</span></div>
+    </div>
+  </div>
+
+  <!-- BLOCO DE AVALIAÇÃO -->
+  <div id="avaliacao" class="avaliacao-bloco">
+
+    <div class="secao-titulo">Situações críticas</div>
+
+    <!-- ZERAMENTO -->
+    <div class="avaliacao-item zerar">
+      <div class="avaliacao-header">
+        <div class="item-meta">
+          <div class="item-num">⚠</div>
+          <div class="item-titulo-wrap">
+            <h3>Situações que zeram a avaliação</h3>
+          </div>
+        </div>
+        <button class="toggle-desc" onclick="toggleZerar(this)" title="Expandir">▾</button>
+      </div>
+      <div class="zerar-opcoes">
+        <label>
+          <input type="checkbox" onchange="controlarZeramento()">
+          Não houve avaliação pois o agente encerrou ou abandonou o atendimento.
+        </label>
+        <label>
+          <input type="checkbox" onchange="controlarZeramento()">
+          Erro Crítico de Condução / Ruptura de Atendimento: o agente conduziu o atendimento totalmente fora da solicitação principal do cliente.
+        </label>
+      </div>
+    </div>
+
+    <div class="secao-titulo">Itens de avaliação</div>
+
+    <!-- ITEM 1 -->
+    <div class="avaliacao-item" data-item="1" data-peso="10">
+      <div class="avaliacao-header">
+        <div class="item-meta">
+          <div class="item-num">01</div>
+          <div class="item-titulo-wrap">
+            <h3>Consulta e uso do histórico do atendimento</h3>
+            <div class="item-peso">Peso: 10 pts</div>
+          </div>
+        </div>
+        <button class="toggle-desc" onclick="toggleDescricao(this)" title="Ver critérios">▾</button>
+      </div>
+      <div class="avaliacao-opcoes">
+        <button class="opcao sim" onclick="selecionarResposta(this,'sim')">✓ Sim</button>
+        <button class="opcao nao" onclick="selecionarResposta(this,'nao')">✗ Não</button>
+        <button class="opcao na"  onclick="selecionarResposta(this,'na')">— N/A</button>
+      </div>
+      <div class="avaliacao-descricao">
+        <p><strong>O que será avaliado:</strong></p>
+        <p>Verifique se o agente analisou o histórico recente de atendimento e/ou interações anteriores relacionadas à mesma solicitação do cliente, garantindo continuidade e contextualização da demanda.</p>
+        <p><strong>Critérios de excelência:</strong></p>
+        <ul>
+          <li>A consulta ao histórico é evidente na condução do atendimento.</li>
+          <li>O agente evita repetir perguntas já respondidas anteriormente.</li>
+          <li>Demonstra conhecimento sobre etapas anteriores da solicitação.</li>
+          <li>Utiliza ferramentas disponíveis (planilhas, backoffice, Turing, Recupera, etc.) para conferir informações e evitar tratativas duplicadas.</li>
+        </ul>
+      </div>
+      <div class="avaliacao-subitens">
+        <label><input type="checkbox"> Não acessou o histórico da conversa em andamento.</label>
+        <label><input type="checkbox"> Refez perguntas que já haviam sido respondidas pelo cliente.</label>
+        <label><input type="checkbox"> Ignorou informações relevantes de interações/tickets anteriores.</label>
+        <label><input type="checkbox"> O expert não utilizou as ferramentas disponíveis (backoffice, planilhas, Turing, Recupera, etc.) para checar informações antes de prosseguir.</label>
+        <label><input type="checkbox"> Identificou-se novamente ao retornar do parking.</label>
+      </div>
+      <div class="observacao-item">
+        <label>Observação (opcional)</label>
+        <textarea placeholder="Use este espaço para contextualizar a sinalização."></textarea>
+      </div>
+    </div>
+
+    <!-- ITEM 2 -->
+    <div class="avaliacao-item" data-item="2" data-peso="10">
+      <div class="avaliacao-header">
+        <div class="item-meta">
+          <div class="item-num">02</div>
+          <div class="item-titulo-wrap">
+            <h3>Consideração da jornada e relacionamento do cliente com a empresa</h3>
+            <div class="item-peso">Peso: 10 pts</div>
+          </div>
+        </div>
+        <button class="toggle-desc" onclick="toggleDescricao(this)" title="Ver critérios">▾</button>
+      </div>
+      <div class="avaliacao-opcoes">
+        <button class="opcao sim" onclick="selecionarResposta(this,'sim')">✓ Sim</button>
+        <button class="opcao nao" onclick="selecionarResposta(this,'nao')">✗ Não</button>
+        <button class="opcao na"  onclick="selecionarResposta(this,'na')">— N/A</button>
+      </div>
+      <div class="avaliacao-descricao">
+        <p><strong>O que será avaliado:</strong></p>
+        <p>Avalia se o agente demonstra compreender o nível de relacionamento do cliente com a meutudo (cliente novo, reincidente, antigo, recorrente em problemas, recorrente em contratações, etc.) e ajusta a abordagem de acordo com esse perfil.</p>
+        <p><strong>Critérios de excelência:</strong></p>
+        <ul>
+          <li>Postura e linguagem adequadas ao momento do cliente na jornada.</li>
+          <li>Demonstra empatia diante de problemas repetitivos ou desgastantes.</li>
+          <li>Reconhece clientes de longa data e valoriza esse relacionamento.</li>
+          <li>Reconhece insumos de contratações anteriores.</li>
+        </ul>
+      </div>
+      <div class="avaliacao-subitens">
+        <label><input type="checkbox"> Tratou o cliente como se fosse um novo contato, desconsiderando o histórico.</label>
+        <label><input type="checkbox"> Ignorou recorrência da demanda ou reincidência de problema.</label>
+        <label><input type="checkbox"> Não demonstrou sensibilidade ao tempo de relacionamento do cliente com a empresa ou não ajustou a abordagem para cliente novo meutudo.</label>
+      </div>
+      <div class="observacao-item">
+        <label>Observação (opcional)</label>
+        <textarea placeholder="Use este espaço para contextualizar a sinalização."></textarea>
+      </div>
+    </div>
+
+    <!-- ITEM 3 -->
+    <div class="avaliacao-item" data-item="3" data-peso="10">
+      <div class="avaliacao-header">
+        <div class="item-meta">
+          <div class="item-num">03</div>
+          <div class="item-titulo-wrap">
+            <h3>Fluidez e adaptação da linguagem</h3>
+            <div class="item-peso">Peso: 10 pts</div>
+          </div>
+        </div>
+        <button class="toggle-desc" onclick="toggleDescricao(this)" title="Ver critérios">▾</button>
+      </div>
+      <div class="avaliacao-opcoes">
+        <button class="opcao sim" onclick="selecionarResposta(this,'sim')">✓ Sim</button>
+        <button class="opcao nao" onclick="selecionarResposta(this,'nao')">✗ Não</button>
+        <button class="opcao na"  onclick="selecionarResposta(this,'na')">— N/A</button>
+      </div>
+      <div class="avaliacao-descricao">
+        <p><strong>O que será avaliado:</strong></p>
+        <p>Verifica se a comunicação foi fluida, natural e alinhada ao nosso tom de voz institucional, considerando o perfil e a necessidade do cliente.</p>
+        <p><strong>Critérios de excelência:</strong></p>
+        <ul>
+          <li>Linguagem clara, humanizada e sem termos técnicos desnecessários.</li>
+          <li>Evita mensagens engessadas, copiadas/coladas ou com tom robótico.</li>
+          <li>Adapta o ritmo e o tom de acordo com o perfil do cliente.</li>
+          <li>Valida a necessidade ou dor apresentada pelo cliente.</li>
+          <li>Utiliza escrita e vocabulário adequados ao tom de voz institucional.</li>
+        </ul>
+        <p><strong>Canais de voz:</strong></p>
+        <ul>
+          <li>Utiliza o mute de forma proativa, garantindo a privacidade da conversa.</li>
+          <li>Não há ruídos externos nem conversas paralelas audíveis para o cliente.</li>
+          <li>A condução do atendimento demonstra foco total no cliente.</li>
+        </ul>
+      </div>
+      <div class="avaliacao-subitens">
+        <label><input type="checkbox"> Utilizou mensagens genéricas ou copiadas/coladas.</label>
+        <label><input type="checkbox"> Utilizou linguagem técnica ou confusa para o cliente.</label>
+        <label><input type="checkbox"> Não adaptou o tom de voz ao perfil do cliente ou à situação.</label>
+        <label><input type="checkbox"> Não mostrou empatia com a necessidade ou dor do cliente.</label>
+        <label><input type="checkbox"> Ignorou a solicitação ou necessidade apresentada pelo cliente.</label>
+        <label><input type="checkbox"> Expert não manteve foco na interação, permitindo ruídos do ambiente ou conversas internas que afetaram a experiência do cliente.</label>
+        <label><input type="checkbox"> Apresentou erros de vocabulário ou concordância verbal/nominal que prejudicaram a clareza ou o profissionalismo.</label>
+      </div>
+      <div class="observacao-item">
+        <label>Observação (opcional)</label>
+        <textarea placeholder="Use este espaço para contextualizar a sinalização."></textarea>
+      </div>
+    </div>
+
+    <!-- ITEM 4 -->
+    <div class="avaliacao-item" data-item="4" data-peso="10">
+      <div class="avaliacao-header">
+        <div class="item-meta">
+          <div class="item-num">04</div>
+          <div class="item-titulo-wrap">
+            <h3>Antecipação e condução consultiva</h3>
+            <div class="item-peso">Peso: 10 pts</div>
+          </div>
+        </div>
+        <button class="toggle-desc" onclick="toggleDescricao(this)" title="Ver critérios">▾</button>
+      </div>
+      <div class="avaliacao-opcoes">
+        <button class="opcao sim" onclick="selecionarResposta(this,'sim')">✓ Sim</button>
+        <button class="opcao nao" onclick="selecionarResposta(this,'nao')">✗ Não</button>
+        <button class="opcao na"  onclick="selecionarResposta(this,'na')">— N/A</button>
+      </div>
+      <div class="avaliacao-descricao">
+        <p><strong>O que será avaliado:</strong></p>
+        <p>Verifica se o agente se antecipou às necessidades do cliente, oferecendo informações ou soluções antes que fossem solicitadas, utilizando seu conhecimento como especialista.</p>
+        <p><strong>Critérios de excelência:</strong></p>
+        <ul>
+          <li>Antecipação de dúvidas ou próximos passos do cliente.</li>
+          <li>Educação do cliente sobre os próximos passos de sua contratação ou solicitação, evitando retornos desnecessários ao atendimento.</li>
+          <li>Sugestão espontânea de soluções ou orientações complementares.</li>
+          <li>Demonstra cuidado em prevenir retrabalho para o cliente.</li>
+        </ul>
+      </div>
+      <div class="avaliacao-subitens">
+        <label><input type="checkbox"> Esperou o cliente solicitar ações que poderiam ter sido antecipadas.</label>
+        <label><input type="checkbox"> Não utilizou ferramentas ou informações disponíveis para prever necessidades.</label>
+        <label><input type="checkbox"> Deixou de propor soluções ou próximos passos relevantes.</label>
+      </div>
+      <div class="observacao-item">
+        <label>Observação (opcional)</label>
+        <textarea placeholder="Use este espaço para contextualizar a sinalização."></textarea>
+      </div>
+    </div>
+
+    <!-- ITEM 5 -->
+    <div class="avaliacao-item" data-item="5" data-peso="10">
+      <div class="avaliacao-header">
+        <div class="item-meta">
+          <div class="item-num">05</div>
+          <div class="item-titulo-wrap">
+            <h3>Discovery de problemas ou melhorias</h3>
+            <div class="item-peso">Peso: 10 pts</div>
+          </div>
+        </div>
+        <button class="toggle-desc" onclick="toggleDescricao(this)" title="Ver critérios">▾</button>
+      </div>
+      <div class="avaliacao-opcoes">
+        <button class="opcao sim" onclick="selecionarResposta(this,'sim')">✓ Sim</button>
+        <button class="opcao nao" onclick="selecionarResposta(this,'nao')">✗ Não</button>
+        <button class="opcao na"  onclick="selecionarResposta(this,'na')">— N/A</button>
+      </div>
+      <div class="avaliacao-descricao">
+        <p><strong>O que será avaliado:</strong></p>
+        <p>Verifica se o agente realizou um discovery adequado, utilizando perguntas pertinentes para compreender completamente os problemas, solicitações, negativas ou sugestões de melhorias apresentadas pelo cliente, quando necessário.</p>
+        <p><strong>Critérios de excelência:</strong></p>
+        <ul>
+          <li>Discovery aplicado em contextos de negociação.</li>
+          <li>Discovery aplicado em casos de erros no app ou na proposta.</li>
+          <li>Utiliza perguntas abertas para identificar se o cliente possui mais de uma necessidade.</li>
+          <li>Instrui o cliente após identificar dúvidas ou dificuldades, a partir do discovery realizado.</li>
+        </ul>
+      </div>
+      <div class="avaliacao-subitens">
+        <label><input type="checkbox"> Não investigou além da demanda apresentada pelo cliente.</label>
+        <label><input type="checkbox"> Realizou perguntas de discovery que não eram pertinentes para a jornada do cliente.</label>
+        <label><input type="checkbox"> Identificou um problema ou dificuldade, mas não tomou nenhuma ação ou orientação.</label>
+        <label><input type="checkbox"> Perdeu oportunidade de registrar uma melhoria ou insight relevante via ticket.</label>
+      </div>
+      <div class="observacao-item">
+        <label>Observação (opcional)</label>
+        <textarea placeholder="Use este espaço para contextualizar a sinalização."></textarea>
+      </div>
+    </div>
+
+    <!-- ITEM 6 -->
+    <div class="avaliacao-item" data-item="6" data-peso="15">
+      <div class="avaliacao-header">
+        <div class="item-meta">
+          <div class="item-num">06</div>
+          <div class="item-titulo-wrap">
+            <h3>Solução de dúvidas com agilidade e domínio técnico</h3>
+            <div class="item-peso">Peso: 15 pts</div>
+          </div>
+        </div>
+        <button class="toggle-desc" onclick="toggleDescricao(this)" title="Ver critérios">▾</button>
+      </div>
+      <div class="avaliacao-opcoes">
+        <button class="opcao sim" onclick="selecionarResposta(this,'sim')">✓ Sim</button>
+        <button class="opcao nao" onclick="selecionarResposta(this,'nao')">✗ Não</button>
+        <button class="opcao na"  onclick="selecionarResposta(this,'na')">— N/A</button>
+      </div>
+      <div class="avaliacao-descricao">
+        <p><strong>O que será avaliado:</strong></p>
+        <p>Considera se o agente utilizou corretamente as ferramentas disponíveis e seu conhecimento técnico para orientar ou direcionar a demanda com eficiência, demonstrando domínio técnico.</p>
+        <p><strong>Foco na resolução:</strong> avalia se o agente cumpriu o objetivo principal do contato, sendo resolutivo e avançando na jornada do cliente.</p>
+        <p><strong>Critérios de excelência:</strong></p>
+        <ul>
+          <li>Utiliza as ferramentas com autonomia e precisão.</li>
+          <li>Demonstra domínio dos processos e ferramentas nas orientações passadas.</li>
+          <li>Apresenta respostas corretas, consistentes e seguras.</li>
+          <li>Explora as opções disponíveis antes de transferir ou escalar o caso.</li>
+        </ul>
+      </div>
+      <div class="avaliacao-subitens">
+        <label><input type="checkbox"> Passou informações incorretas ou que não estão de acordo com os processos e fluxos.</label>
+        <label><input type="checkbox"> Não demonstrou domínio técnico dos processos ou segurança nas informações passadas, ou deixou de compartilhar informações relevantes com o cliente.</label>
+        <label><input type="checkbox"> Demonstrou insegurança ou desconhecimento do processo de forma perceptível ao cliente.</label>
+        <label><input type="checkbox"> Transferiu ou escalou indevidamente a demanda.</label>
+        <label><input type="checkbox"> Passou detalhes e condições da oferta de forma incompleta ou incorreta.</label>
+        <label><input type="checkbox"> Não priorizou a condução da demanda principal da fila (ex.: formalização, integração, retenção, cobrança), desviando o foco resolutivo.</label>
+      </div>
+      <div class="observacao-item">
+        <label>Observação (opcional)</label>
+        <textarea placeholder="Use este espaço para contextualizar a sinalização."></textarea>
+      </div>
+    </div>
+
+    <!-- ITEM 7 -->
+    <div class="avaliacao-item" data-item="7" data-peso="10">
+      <div class="avaliacao-header">
+        <div class="item-meta">
+          <div class="item-num">07</div>
+          <div class="item-titulo-wrap">
+            <h3>Contorno de objeções, insegurança e situações de atrito</h3>
+            <div class="item-peso">Peso: 10 pts</div>
+          </div>
+        </div>
+        <button class="toggle-desc" onclick="toggleDescricao(this)" title="Ver critérios">▾</button>
+      </div>
+      <div class="avaliacao-opcoes">
+        <button class="opcao sim" onclick="selecionarResposta(this,'sim')">✓ Sim</button>
+        <button class="opcao nao" onclick="selecionarResposta(this,'nao')">✗ Não</button>
+        <button class="opcao na"  onclick="selecionarResposta(this,'na')">— N/A</button>
+      </div>
+      <div class="avaliacao-descricao">
+        <p><strong>O que será avaliado:</strong></p>
+        <p>Avalia se o agente lidou com resistências, frustrações ou insatisfações do cliente com empatia, segurança e equilíbrio emocional.</p>
+        <p><strong>Critérios de excelência:</strong></p>
+        <ul>
+          <li>Acolhe a insatisfação do cliente sem invalidar sua experiência.</li>
+          <li>Demonstra firmeza respeitosa ao explicar limites ou políticas.</li>
+          <li>Busca restaurar a confiança do cliente com transparência e solução.</li>
+          <li>Realiza argumentações e contra-argumentações de forma pertinente, com foco direto na objeção apresentada pelo cliente.</li>
+          <li>Identifica o limite entre insistência e persistência durante a argumentação ou retenção.</li>
+        </ul>
+      </div>
+      <div class="avaliacao-subitens">
+        <label><input type="checkbox"> Não reconheceu a frustração ou insatisfação do cliente.</label>
+        <label><input type="checkbox"> Adotou postura defensiva, rígida ou impessoal.</label>
+        <label><input type="checkbox"> Não argumentou ou contra-argumentou com foco na objeção do cliente.</label>
+        <label><input type="checkbox"> Não identificou o limite entre insistência e persistência durante a argumentação.</label>
+        <label><input type="checkbox"> Não contornou ou não tratou adequadamente a insegurança apresentada pelo cliente.</label>
+      </div>
+      <div class="observacao-item">
+        <label>Observação (opcional)</label>
+        <textarea placeholder="Use este espaço para contextualizar a sinalização."></textarea>
+      </div>
+    </div>
+
+    <!-- ITEM 8 -->
+    <div class="avaliacao-item" data-item="8" data-peso="10">
+      <div class="avaliacao-header">
+        <div class="item-meta">
+          <div class="item-num">08</div>
+          <div class="item-titulo-wrap">
+            <h3>Execução dos procedimentos internos de atendimento</h3>
+            <div class="item-peso">Peso: 10 pts</div>
+          </div>
+        </div>
+        <button class="toggle-desc" onclick="toggleDescricao(this)" title="Ver critérios">▾</button>
+      </div>
+      <div class="avaliacao-opcoes">
+        <button class="opcao sim" onclick="selecionarResposta(this,'sim')">✓ Sim</button>
+        <button class="opcao nao" onclick="selecionarResposta(this,'nao')">✗ Não</button>
+        <button class="opcao na"  onclick="selecionarResposta(this,'na')">— N/A</button>
+      </div>
+      <div class="avaliacao-descricao">
+        <p><strong>O que será avaliado:</strong></p>
+        <p>Avalia se o agente cumpriu corretamente os procedimentos internos esperados, garantindo padronização, rastreabilidade e condução adequada do atendimento do início ao encerramento.</p>
+        <p><strong>Exemplos práticos:</strong></p>
+        <ul>
+          <li>Envio do atendimento ao parking quando pertinente.</li>
+          <li>Movimentação correta da esteira de contrato.</li>
+          <li>Direcionamento do caso para a área resolvedora quando necessário.</li>
+          <li>Registro de mais de um ticket em atendimentos com múltiplas solicitações.</li>
+          <li>Envio de oportunidade em casos de port out com oportunidade e detalhamento adequado das condições.</li>
+          <li>Condução correta do atendimento, garantindo encerramento adequado e evitando tratativas fora dos padrões.</li>
+          <li>Retorno ao cliente e encerramento ou estacionamento dentro do tempo esperado (até 6 minutos, conforme contexto).</li>
+        </ul>
+      </div>
+      <div class="avaliacao-subitens">
+        <label><input type="checkbox"> Não enviou o cliente ao parking quando deveria ou enviou ao parking sem necessidade.</label>
+        <label><input type="checkbox"> Não movimentou a esteira conforme o procedimento definido.</label>
+        <label><input type="checkbox"> Não registrou o ticket em "aguardando tratativa" ou não inseriu a área resolvedora correta, ou ainda encaminhou para área resolvedora sem necessidade.</label>
+        <label><input type="checkbox"> Não enviou proposta para cliente de port out com oportunidade ou não detalhou corretamente as condições da proposta.</label>
+        <label><input type="checkbox"> Realizou envio de prints, dados incorretos ou informações sensíveis/pessoais ao cliente.</label>
+        <label><input type="checkbox"> Realizou encerramento de forma brusca ou impessoal, sem garantir que todas as informações foram devidamente esclarecidas ou sem aguardar o tempo mínimo de 3 minutos para possível resposta do cliente.</label>
+        <label><input type="checkbox"> Não realizou a confirmação de dados necessária para assegurar a titularidade.</label>
+        <label><input type="checkbox"> Encerramento ou envio para parking realizado fora do tempo adequado (receptivo: máximo de 6 minutos; ativo: mínimo de 10 e máximo de 15 minutos).</label>
+        <label><input type="checkbox"> Demora desnecessária ou recorrente para responder o cliente durante o atendimento (success e service: superior a 6 minutos entre mensagens; VOC: superior a 8 minutos).</label>
+      </div>
+      <div class="observacao-item">
+        <label>Observação (opcional)</label>
+        <textarea placeholder="Use este espaço para contextualizar a sinalização."></textarea>
+      </div>
+    </div>
+
+    <!-- ITEM 9 – CSAT -->
+    <div class="avaliacao-item" data-item="9" data-peso="10">
+      <div class="avaliacao-header">
+        <div class="item-meta">
+          <div class="item-num">09</div>
+          <div class="item-titulo-wrap">
+            <h3>Esforço e experiência percebida pelo cliente (CSAT)</h3>
+            <div class="item-peso">Penalização: −10 pts (se impacto negativo confirmado)</div>
+          </div>
+        </div>
+        <button class="toggle-desc" onclick="toggleDescricao(this)" title="Ver critérios">▾</button>
+      </div>
+      <div class="avaliacao-descricao">
+        <p>Verifica, com base na análise do atendimento, se a conduta do agente contribuiu para que o cliente percebesse baixo esforço, acolhimento e solução, refletindo em uma nota ofensora de CSAT com comentário relacionado ao atendimento.</p>
+      </div>
+      <div class="avaliacao-opcoes csat-opcoes" style="margin-top:16px;">
+        <button class="opcao csat detrator" data-valor="1" onclick="selecionarCSAT(this,1)">1</button>
+        <button class="opcao csat detrator" data-valor="2" onclick="selecionarCSAT(this,2)">2</button>
+        <button class="opcao csat detrator" data-valor="3" onclick="selecionarCSAT(this,3)">3</button>
+        <button class="opcao csat positivo" data-valor="4" onclick="selecionarCSAT(this,4)">4</button>
+        <button class="opcao csat positivo" data-valor="5" onclick="selecionarCSAT(this,5)">5</button>
+        <button class="opcao csat nresp" data-valor="0" onclick="selecionarCSAT(this,'nao_respondido')">Não respondeu</button>
+      </div>
+      <div class="csat-impacto avaliacao-subitens" style="background:rgba(239,148,36,0.08); border-color:rgba(239,148,36,0.20);">
+        <p>O CSAT foi impactado pela condução do expert?</p>
+        <label>
+          <input type="radio" name="impacto_csat" value="sem_impacto" onchange="recalcularNota()">
+          Sem impacto negativo — nota baixa por motivo externo, sem relação com a condução do agente.
+        </label>
+        <label>
+          <input type="radio" name="impacto_csat" value="com_impacto" onchange="recalcularNota()">
+          Houve impacto negativo — percepção de má condução: falta de acolhimento, esforço ou solução.
+        </label>
+      </div>
+    </div>
+
+    <!-- ITEM 10 -->
+    <div class="avaliacao-item" data-item="10" data-peso="5">
+      <div class="avaliacao-header">
+        <div class="item-meta">
+          <div class="item-num">10</div>
+          <div class="item-titulo-wrap">
+            <h3>Registro do ticket de atendimento</h3>
+            <div class="item-peso">Peso: 5 pts</div>
+          </div>
+        </div>
+        <button class="toggle-desc" onclick="toggleDescricao(this)" title="Ver critérios">▾</button>
+      </div>
+      <div class="avaliacao-opcoes">
+        <button class="opcao sim" onclick="selecionarResposta(this,'sim')">✓ Sim</button>
+        <button class="opcao nao" onclick="selecionarResposta(this,'nao')">✗ Não</button>
+        <button class="opcao na"  onclick="selecionarResposta(this,'na')">— N/A</button>
+      </div>
+      <div class="avaliacao-descricao">
+        <p>Avalia se o ticket informado representa corretamente o atendimento analisado, garantindo rastreabilidade e qualidade do registro consumido pelas áreas.</p>
+      </div>
+      <div class="avaliacao-subitens">
+        <p>Selecione os campos com registro incorreto:</p>
+
+        <!-- PRODUTO -->
+        <label>
+          <input type="checkbox" onchange="toggleCorrecao(this,'produto')">
+          Produto
+        </label>
+        <div class="correcao-campo" data-campo="produto">
+          <label>Produto correto</label>
+          <select id="produtoCorreto"><option value="">Selecione o produto correto</option></select>
+        </div>
+
+        <!-- CONTRATO -->
+        <label>
+          <input type="checkbox" onchange="toggleCorrecao(this,'contrato')">
+          Contrato
+        </label>
+        <div class="correcao-campo" data-campo="contrato">
+          <label>Número do contrato correto</label>
+          <input type="text" id="contratoCorreto" placeholder="Digite o número do contrato correto" style="width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid var(--cinza-borda);font-family:'DM Sans',sans-serif;font-size:13.5px;color:var(--cinza-escuro);background:var(--branco);">
+        </div>
+
+        <!-- JORNADA -->
+        <label>
+          <input type="checkbox" onchange="toggleCorrecao(this,'jornada')">
+          Jornada
+        </label>
+        <div class="correcao-campo" data-campo="jornada">
+          <label>Jornada correta</label>
+          <select id="jornadaCorreta"><option value="">Selecione a jornada correta</option></select>
+        </div>
+
+        <!-- MOTIVO -->
+        <label>
+          <input type="checkbox" onchange="toggleCorrecao(this,'motivo')">
+          Motivo
+        </label>
+        <div class="correcao-campo" data-campo="motivo">
+          <label>Motivo correto</label>
+          <select id="motivoCorreto" disabled><option value="">Selecione primeiro a jornada correta</option></select>
+        </div>
+
+        <!-- STATUS -->
+        <label>
+          <input type="checkbox" onchange="toggleCorrecao(this,'status')">
+          Status
+        </label>
+        <div class="correcao-campo" data-campo="status">
+          <label>Status correto</label>
+          <select id="statusCorreto"><option value="">Selecione o status correto</option></select>
+        </div>
+
+        <!-- JUSTIFICATIVA -->
+        <label>
+          <input type="checkbox" onchange="toggleCorrecao(this,'justificativa')">
+          Justificativa
+        </label>
+        <div class="correcao-campo" data-campo="justificativa">
+          <label>Justificativa correta</label>
+          <select id="justificativaCorreta" disabled><option value="">Selecione primeiro o status e a jornada corretos</option></select>
+          <div id="justificativaHint" style="font-size:11px;color:var(--cinza-medio);margin-top:4px;display:none;">
+            ⚠ Para filtrar as justificativas, selecione a jornada correta e o status correto.
+          </div>
+        </div>
+
+        <!-- ÁREA RESOLVEDORA -->
+        <label>
+          <input type="checkbox" onchange="toggleCorrecao(this,'area')">
+          Área resolvedora
+        </label>
+        <div class="correcao-campo" data-campo="area">
+          <label>Área correta</label>
+          <select id="areaCorreta"><option value="">Selecione a área</option></select>
+          <div id="subareaWrapper" style="display:none; margin-top:10px;">
+            <label>Subárea correta</label>
+            <select id="subareaCorreta"><option value="">Selecione a subárea</option></select>
+          </div>
+        </div>
+
+        <!-- DEMAIS CAMPOS -->
+        <label><input type="checkbox"> Descrição</label>
+        <label><input type="checkbox"> Não houve registro do ticket</label>
+        <label><input type="checkbox"> Não houve registro de mais de um ticket quando necessário</label>
+      </div>
+
+      <div class="observacao-item">
+        <label>Observação (opcional)</label>
+        <textarea placeholder="Use este espaço apenas se precisar contextualizar a inconsistência identificada."></textarea>
+      </div>
+    </div>
+
+    <!-- ALERTA -->
+    <div class="alerta-incompleto" id="alertaIncompleto">
+      ⚠ Ainda há itens sem resposta. Revise antes de finalizar.
+    </div>
+
+    <!-- BOTÃO FINALIZAR -->
+    <button class="btn-finalizar" id="btnFinalizar" onclick="abrirModal()">
+      Finalizar avaliação e exportar →
+    </button>
+
+  </div><!-- /avaliacao-bloco -->
+</div><!-- /container -->
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-nota-grande">
+      <div class="nota-circulo zerada" id="modalCirculo">—</div>
+      <div class="modal-nota-label" id="modalSubtitulo">Avaliação concluída</div>
+    </div>
+
+    <div class="modal-section-title">Resumo por item</div>
+    <div class="resumo-itens" id="resumoItens"></div>
+
+    <div class="modal-divider"></div>
+
+    <div class="modal-section-title">Exportar JSON</div>
+    <button class="btn-modal secundario" style="width:100%" onclick="toggleJsonPreview()">Ver / copiar JSON</button>
+    <div class="json-preview" id="jsonPreview"><pre id="jsonConteudo"></pre></div>
+
+    <!-- STATUS DO ENVIO -->
+    <div id="envioStatus" style="display:none; margin-top:14px; padding:12px 16px; border-radius:8px; font-size:13px; font-weight:600; text-align:center;"></div>
+
+    <div class="modal-acoes">
+      <button class="btn-modal secundario" onclick="fecharModal()">Fechar</button>
+      <button class="btn-modal secundario" onclick="baixarJson()">⬇ Baixar JSON</button>
+      <button class="btn-modal primario" id="btnEnviarSheets" onclick="enviarParaSheets()">↑ Enviar para Sheets</button>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  /* ── DADOS ── */
+  const PESOS = { 1:10, 2:10, 3:10, 4:10, 5:10, 6:15, 7:10, 8:10, 9:10, 10:5 };
+  let dados = {};
+  let avaliacaoZerada = false;
+
+  /* ── INIT ── */
+  fetch("dados.json")
+    .then(r => r.json())
+    .then(json => {
+      dados = json;
+      carregarProdutos();
+      carregarJornadas();
+      carregarStatus();
+      carregarAreasCorretas();
+    })
+    .catch(() => {
+      // fallback inline se não achar o arquivo
+      dados = window._dadosInline || {};
+    });
+
+  /* ── VALIDAÇÃO INICIAL ── */
+  window.validarInicio = function () {
+    const expert = document.getElementById("expert").value;
+    const ticket = document.getElementById("ticket").value;
+    const person = document.getElementById("person").value;
+    const erro   = document.getElementById("erroExpert");
+    const botao  = document.getElementById("btnAvaliar");
+
+    const emailOk = expert.endsWith("@meutudo.app");
+    const valido  = emailOk && ticket.trim() !== "" && person.trim() !== "";
+
+    erro.innerText = expert === "" ? "" : emailOk ? "" : "O e-mail deve terminar com @meutudo.app";
+
+    document.getElementById("expert").classList.toggle("valido", emailOk && expert !== "");
+    document.getElementById("ticket").classList.toggle("valido", ticket.trim() !== "");
+    document.getElementById("person").classList.toggle("valido", person.trim() !== "");
+
+    botao.style.display = valido ? "inline-block" : "none";
+  };
+
+  window.iniciarAvaliacao = function () {
+    document.getElementById("avaliacao").style.display = "block";
+    document.getElementById("btnAvaliar").style.display = "none";
+    document.getElementById("notaPanel").classList.add("visivel");
+    document.getElementById("btnFinalizar").style.display = "block";
+    recalcularNota();
+    atualizarProgresso();
+  };
+
+  /* ── TOGGLES ── */
+  window.toggleDescricao = function (btn) {
+    const desc = btn.closest(".avaliacao-item").querySelector(".avaliacao-descricao");
+    const aberta = desc.style.display === "block";
+    desc.style.display = aberta ? "none" : "block";
+    btn.innerText = aberta ? "▾" : "▴";
+  };
+
+  window.toggleZerar = function (btn) {
+    const bloco = btn.closest(".avaliacao-item").querySelector(".zerar-opcoes");
+    const aberto = bloco.style.display === "block";
+    bloco.style.display = aberto ? "none" : "block";
+    btn.innerText = aberto ? "▾" : "▴";
+  };
+
+  window.controlarZeramento = function () {
+    avaliacaoZerada = document.querySelectorAll(".zerar-opcoes input:checked").length > 0;
+    document.querySelectorAll(".avaliacao-item:not(.zerar)").forEach(item => {
+      item.classList.toggle("item-zerado", avaliacaoZerada);
+    });
+    recalcularNota();
+  };
+
+  /* ── SIM / NÃO / NA ── */
+  window.selecionarResposta = function (btn, tipo) {
+    const item = btn.closest(".avaliacao-item");
+    item.querySelectorAll(".opcao:not(.csat)").forEach(b => b.classList.remove("ativa"));
+    btn.classList.add("ativa");
+
+    item.classList.remove("respondido-sim","respondido-nao","respondido-na");
+    item.classList.add("respondido-" + tipo);
+
+    const sub = item.querySelector(".avaliacao-subitens");
+    const obs = item.querySelector(".observacao-item");
+
+    if (sub) {
+      sub.style.display = tipo === "nao" ? "block" : "none";
+      if (tipo !== "nao") sub.querySelectorAll("input").forEach(i => { i.checked = false; });
+    }
+    if (obs) {
+      obs.style.display = tipo === "nao" ? "block" : "none";
+      if (tipo !== "nao") obs.querySelector("textarea").value = "";
+    }
+
+    recalcularNota();
+    atualizarProgresso();
+  };
+
+  /* ── CSAT ── */
+  window.selecionarCSAT = function (btn, valor) {
+    const item = btn.closest(".avaliacao-item");
+    item.querySelectorAll(".opcao.csat").forEach(b => b.classList.remove("ativa"));
+    btn.classList.add("ativa");
+
+    item.classList.remove("respondido-sim","respondido-nao","respondido-na");
+    item.classList.add("respondido-na"); // CSAT sempre marca como "respondido"
+
+    const impacto = item.querySelector(".csat-impacto");
+    const detratores = [1,2,3];
+    impacto.style.display = detratores.includes(valor) ? "block" : "none";
+    if (!detratores.includes(valor)) {
+      impacto.querySelectorAll("input").forEach(i => i.checked = false);
+    }
+
+    recalcularNota();
+    atualizarProgresso();
+  };
+
+  /* ── CÁLCULO DE NOTA ── */
+  window.recalcularNota = function () {
+    if (avaliacaoZerada) {
+      atualizarDisplay(0, "Avaliação zerada por situação crítica", "zerada");
+      return;
+    }
+
+    let pontos = 0;
+    let totalValido = 0;
+
+    document.querySelectorAll(".avaliacao-item[data-item]").forEach(item => {
+      const num   = parseInt(item.getAttribute("data-item"));
+      const peso  = parseInt(item.getAttribute("data-peso"));
+
+      if (num === 9) {
+        // CSAT sempre entra no total com peso 10
+        totalValido += peso;
+        const csatAtiva  = item.querySelector(".opcao.csat.ativa");
+        const impacto    = item.querySelector('input[name="impacto_csat"]:checked');
+        const detratores = [1,2,3];
+        const valorCsat  = csatAtiva ? parseInt(csatAtiva.getAttribute("data-valor")) : null;
+
+        if (csatAtiva) {
+          const ehDetrator = detratores.includes(valorCsat);
+          const comImpacto = impacto?.value === "com_impacto";
+          // Ganha 10 se: não detrator, ou detrator sem impacto. Ganha 0 se detrator com impacto.
+          if (!(ehDetrator && comImpacto)) pontos += peso;
+        }
+        return;
+      }
+
+      const sim = item.querySelector(".opcao.sim.ativa");
+      const nao = item.querySelector(".opcao.nao.ativa");
+      const na  = item.querySelector(".opcao.na.ativa");
+
+      if (na) return; // ignora NA do total
+
+      totalValido += peso;
+      if (sim) pontos += peso;
+      // nao = 0 pts
+    });
+
+    const base = totalValido;
+    const nota = base > 0 ? Math.max(0, Math.round((pontos / base) * 100)) : null;
+
+    if (nota === null) {
+      atualizarDisplay(null, "Nenhum item respondido", "zerada");
+      return;
+    }
+
+    const classe = nota >= 80 ? "alta" : nota >= 60 ? "media" : "baixa";
+    const label  = `${pontos} / ${base} pts`;
+    atualizarDisplay(nota, label, classe);
+  };
+
+  function atualizarDisplay(nota, detalhes, classe) {
+    const el      = document.getElementById("notaValor");
+    const gauge   = document.getElementById("gaugeFill");
+    const detalhe = document.getElementById("notaDetalhes");
+
+    el.className = "nota-valor " + classe;
+    el.innerText  = nota !== null ? nota : "—";
+    gauge.className = "gauge-fill " + classe;
+    gauge.style.width = (nota !== null ? nota : 0) + "%";
+    detalhe.innerText = detalhes;
+  }
+
+  /* ── PROGRESSO ── */
+  function atualizarProgresso() {
+    const total = document.querySelectorAll(".avaliacao-item[data-item]").length;
+    let respondidos = 0;
+
+    document.querySelectorAll(".avaliacao-item[data-item]").forEach(item => {
+      const num = parseInt(item.getAttribute("data-item"));
+      if (num === 9) {
+        if (item.querySelector(".opcao.csat.ativa")) respondidos++;
+      } else {
+        if (item.querySelector(".opcao.sim.ativa,.opcao.nao.ativa,.opcao.na.ativa")) respondidos++;
+      }
+    });
+
+    const pct = (respondidos / total) * 100;
+    document.getElementById("progressFill").style.height = pct + "%";
+  }
+
+  /* ── TICKET CORREÇÃO ── */
+  window.toggleCorrecao = function (checkbox, campo) {
+    const bloco = document.querySelector(`.correcao-campo[data-campo="${campo}"]`);
+    if (!bloco) return;
+    bloco.style.display = checkbox.checked ? "block" : "none";
+    if (!checkbox.checked) {
+      bloco.querySelectorAll("select").forEach(s => s.value = "");
+    }
+  };
+
+  /* ── DROPDOWNS ── */
+  function carregarProdutos() {
+    const sel = document.getElementById("produtoCorreto");
+    if (!sel || !dados.produto) return;
+    dados.produto.forEach(p => sel.appendChild(new Option(p, p)));
+  }
+
+  function carregarJornadas() {
+    const sel = document.getElementById("jornadaCorreta");
+    if (!sel || !dados.jornada) return;
+    dados.jornada.forEach(j => sel.appendChild(new Option(j, j)));
+    sel.addEventListener("change", () => {
+      carregarMotivos();
+      tentarCarregarJustificativas();
+    });
+  }
+
+  function carregarMotivos() {
+    const jornada = document.getElementById("jornadaCorreta").value;
+    const sel     = document.getElementById("motivoCorreto");
+    sel.innerHTML = "<option value=''>Selecione o motivo correto</option>";
+    sel.disabled  = true;
+    if (!dados.motivo || !dados.motivo[jornada]) return;
+    dados.motivo[jornada].forEach(m => sel.appendChild(new Option(m, m)));
+    sel.disabled = false;
+  }
+
+  function carregarStatus() {
+    const sel = document.getElementById("statusCorreto");
+    if (!sel || !dados.status) return;
+    dados.status.forEach(s => sel.appendChild(new Option(s, s)));
+    sel.addEventListener("change", tentarCarregarJustificativas);
+  }
+
+  function tentarCarregarJustificativas() {
+    const status  = document.getElementById("statusCorreto")?.value;
+    const jornada = document.getElementById("jornadaCorreta")?.value;
+    const sel     = document.getElementById("justificativaCorreta");
+    const hint    = document.getElementById("justificativaHint");
+    if (!sel) return;
+
+    sel.innerHTML = "<option value=''>Selecione a justificativa correta</option>";
+    sel.disabled  = true;
+
+    // Só carrega se ambos estiverem selecionados
+    if (!status || !jornada) {
+      if (hint) hint.style.display = "block";
+      return;
+    }
+
+    if (hint) hint.style.display = "none";
+
+    const lista = dados.justificativa?.[status]?.[jornada];
+    if (!lista || lista.length === 0) {
+      sel.innerHTML = "<option value=''>Nenhuma justificativa para esta combinação</option>";
+      return;
+    }
+
+    lista.forEach(j => sel.appendChild(new Option(j, j)));
+    sel.disabled = false;
+  }
+
+  function carregarAreasCorretas() {
+    const sel = document.getElementById("areaCorreta");
+    if (!sel || !dados.area_resolvedora) return;
+    Object.keys(dados.area_resolvedora).forEach(area => {
+      sel.appendChild(new Option(area, area));
+    });
+    sel.addEventListener("change", function () {
+      const subareas   = dados.area_resolvedora[this.value] || [];
+      const wrapper    = document.getElementById("subareaWrapper");
+      const subSel     = document.getElementById("subareaCorreta");
+      subSel.innerHTML = "<option value=''>Selecione a subárea</option>";
+      wrapper.style.display = subareas.length > 0 ? "block" : "none";
+      subareas.forEach(s => subSel.appendChild(new Option(s, s)));
+    });
+  }
+
+  /* ── MODAL ── */
+  window.abrirModal = function () {
+    gerarResumo();
+    document.getElementById("modalOverlay").classList.add("visivel");
+  };
+
+  window.fecharModal = function () {
+    document.getElementById("modalOverlay").classList.remove("visivel");
+    document.getElementById("jsonPreview").style.display = "none";
+  };
+
+  function gerarResumo() {
+    const nota   = document.getElementById("notaValor").innerText;
+    const classe = document.getElementById("notaValor").className.replace("nota-valor ","");
+
+    const circulo = document.getElementById("modalCirculo");
+    circulo.className = "nota-circulo " + classe;
+    circulo.innerText = nota;
+
+    const subtitulo = document.getElementById("modalSubtitulo");
+    if (avaliacaoZerada) {
+      subtitulo.innerText = "Avaliação zerada por situação crítica";
+    } else {
+      const n = parseInt(nota);
+      subtitulo.innerText = n >= 80 ? "Boa condução do atendimento" : n >= 60 ? "Atendimento com pontos de melhoria" : "Atendimento abaixo do esperado";
+    }
+
+    const container = document.getElementById("resumoItens");
+    container.innerHTML = "";
+
+    const nomes = {
+      1:"Histórico", 2:"Jornada do cliente", 3:"Linguagem",
+      4:"Antecipação", 5:"Discovery", 6:"Domínio técnico",
+      7:"Contorno de objeções", 8:"Procedimentos internos", 9:"CSAT", 10:"Ticket"
+    };
+
+    document.querySelectorAll(".avaliacao-item[data-item]").forEach(item => {
+      const num   = parseInt(item.getAttribute("data-item"));
+      const peso  = item.getAttribute("data-peso");
+      let resp = "pen", label = "Pendente";
+
+      if (num === 9) {
+        const ativa   = item.querySelector(".opcao.csat.ativa");
+        const impacto = item.querySelector('input[name="impacto_csat"]:checked');
+        const valorCsat = ativa ? parseInt(ativa.getAttribute("data-valor")) : null;
+        const detratores = [1,2,3];
+
+        if (ativa) {
+          const ehDetrator = detratores.includes(valorCsat);
+          const comImpacto = impacto?.value === "com_impacto";
+          if (ehDetrator && comImpacto) {
+            resp = "nao"; label = `CSAT ${ativa.innerText.trim()} · Impacto negativo · 0 pts`;
+          } else if (ehDetrator) {
+            resp = "na"; label = `CSAT ${ativa.innerText.trim()} · Sem impacto · +10 pts`;
+          } else {
+            resp = "sim"; label = `CSAT ${ativa.innerText.trim()} · +10 pts`;
+          }
+        }
+      } else {
+        if (item.querySelector(".opcao.sim.ativa")) { resp = "sim"; label = `Sim · +${peso} pts`; }
+        else if (item.querySelector(".opcao.nao.ativa")) { resp = "nao"; label = `Não · 0 pts`; }
+        else if (item.querySelector(".opcao.na.ativa"))  { resp = "na";  label = "N/A · ignorado"; }
+      }
+
+      const div = document.createElement("div");
+      div.className = "resumo-item";
+      div.innerHTML = `
+        <span class="resumo-item-nome">${num}. ${nomes[num]}</span>
+        <span class="resumo-item-valor ${resp}">${label}</span>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  /* ── JSON ── */
+  function coletarJson() {
+    const resultado = {
+      meta: {
+        expert: document.getElementById("expert").value,
+        ticket_id: document.getElementById("ticket").value,
+        person_id: document.getElementById("person").value,
+        data_hora: new Date().toISOString(),
+        zerado: avaliacaoZerada,
+        nota_final: parseInt(document.getElementById("notaValor").innerText) || 0
+      },
+      itens: {}
+    };
+
+    document.querySelectorAll(".avaliacao-item[data-item]").forEach(item => {
+      const num  = parseInt(item.getAttribute("data-item"));
+      const peso = parseInt(item.getAttribute("data-peso"));
+      const obj  = { peso };
+
+      if (num === 9) {
+        const ativa   = item.querySelector(".opcao.csat.ativa");
+        const impacto = item.querySelector('input[name="impacto_csat"]:checked');
+        const valorCsat = ativa ? parseInt(ativa.getAttribute("data-valor")) : null;
+        const detratores = [1,2,3];
+        const ehDetrator = detratores.includes(valorCsat);
+        const comImpacto = impacto?.value === "com_impacto";
+        obj.csat_valor   = ativa ? ativa.innerText.trim() : null;
+        obj.impacto_csat = impacto ? impacto.value : null;
+        obj.pontos       = (ehDetrator && comImpacto) ? 0 : (ativa ? 10 : null);
+      } else {
+        const sim = item.querySelector(".opcao.sim.ativa");
+        const nao = item.querySelector(".opcao.nao.ativa");
+        const na  = item.querySelector(".opcao.na.ativa");
+        obj.resposta = sim ? "sim" : nao ? "nao" : na ? "na" : null;
+
+        if (nao) {
+          obj.ocorrencias = [];
+          item.querySelectorAll(".avaliacao-subitens input[type=checkbox]:checked").forEach(cb => {
+            obj.ocorrencias.push(cb.closest("label").innerText.trim());
+          });
+          const obs = item.querySelector(".observacao-item textarea");
+          obj.observacao = obs ? obs.value.trim() : "";
+        }
+
+        if (num === 10) {
+          obj.campos_incorretos = {};
+          const prod  = document.getElementById("produtoCorreto");
+          const cont  = document.getElementById("contratoCorreto");
+          const jorn  = document.getElementById("jornadaCorreta");
+          const mot   = document.getElementById("motivoCorreto");
+          const stat  = document.getElementById("statusCorreto");
+          const just  = document.getElementById("justificativaCorreta");
+          const area  = document.getElementById("areaCorreta");
+          const sub   = document.getElementById("subareaCorreta");
+          if (prod?.value)        obj.campos_incorretos.produto       = prod.value;
+          if (cont?.value?.trim()) obj.campos_incorretos.contrato     = cont.value.trim();
+          if (jorn?.value)        obj.campos_incorretos.jornada       = jorn.value;
+          if (mot?.value)         obj.campos_incorretos.motivo        = mot.value;
+          if (stat?.value)        obj.campos_incorretos.status        = stat.value;
+          if (just?.value)        obj.campos_incorretos.justificativa = just.value;
+          if (area?.value)        obj.campos_incorretos.area          = area.value;
+          if (sub?.value)         obj.campos_incorretos.subarea       = sub.value;
+        }
+      }
+
+      resultado.itens[num] = obj;
+    });
+
+    return resultado;
+  }
+
+  /* ── ENVIAR PARA GOOGLE SHEETS ── */
+  // Cole aqui a URL gerada pelo Google Apps Script após a implantação
+  const SHEETS_URL = "https://script.google.com/a/macros/meutudo.app/s/AKfycbx8Zlj8lfR6gWUZh6jNIh7VOoIwBVr3Gf32jMTIhLTU0Q5rejq5sF-zcOT2qELKVu0q/exec";
+
+  window.enviarParaSheets = async function () {
+    const btn    = document.getElementById("btnEnviarSheets");
+    const status = document.getElementById("envioStatus");
+    const dados  = coletarJson();
+
+    // Monta linha plana para a planilha
+    const linha = {
+      data_hora:    dados.meta.data_hora,
+      expert:       dados.meta.expert,
+      ticket_id:    dados.meta.ticket_id,
+      person_id:    dados.meta.person_id,
+      nota_final:   dados.meta.nota_final,
+      zerado:       dados.meta.zerado ? "Sim" : "Não",
+
+      // Itens 1–8 e 10
+      item_1:  dados.itens[1]?.resposta  || "",
+      item_2:  dados.itens[2]?.resposta  || "",
+      item_3:  dados.itens[3]?.resposta  || "",
+      item_4:  dados.itens[4]?.resposta  || "",
+      item_5:  dados.itens[5]?.resposta  || "",
+      item_6:  dados.itens[6]?.resposta  || "",
+      item_7:  dados.itens[7]?.resposta  || "",
+      item_8:  dados.itens[8]?.resposta  || "",
+      item_10: dados.itens[10]?.resposta || "",
+
+      // CSAT
+      csat_valor:   dados.itens[9]?.csat_valor   || "",
+      csat_impacto: dados.itens[9]?.impacto_csat || "",
+      csat_pontos:  dados.itens[9]?.pontos ?? "",
+
+      // Ocorrências (itens marcados como Não)
+      ocorr_1:  (dados.itens[1]?.ocorrencias  || []).join(" | "),
+      ocorr_2:  (dados.itens[2]?.ocorrencias  || []).join(" | "),
+      ocorr_3:  (dados.itens[3]?.ocorrencias  || []).join(" | "),
+      ocorr_4:  (dados.itens[4]?.ocorrencias  || []).join(" | "),
+      ocorr_5:  (dados.itens[5]?.ocorrencias  || []).join(" | "),
+      ocorr_6:  (dados.itens[6]?.ocorrencias  || []).join(" | "),
+      ocorr_7:  (dados.itens[7]?.ocorrencias  || []).join(" | "),
+      ocorr_8:  (dados.itens[8]?.ocorrencias  || []).join(" | "),
+
+      // Observações
+      obs_1:  dados.itens[1]?.observacao  || "",
+      obs_2:  dados.itens[2]?.observacao  || "",
+      obs_3:  dados.itens[3]?.observacao  || "",
+      obs_4:  dados.itens[4]?.observacao  || "",
+      obs_5:  dados.itens[5]?.observacao  || "",
+      obs_6:  dados.itens[6]?.observacao  || "",
+      obs_7:  dados.itens[7]?.observacao  || "",
+      obs_8:  dados.itens[8]?.observacao  || "",
+
+      // Ticket (item 10)
+      ticket_produto:       dados.itens[10]?.campos_incorretos?.produto       || "",
+      ticket_contrato:      dados.itens[10]?.campos_incorretos?.contrato      || "",
+      ticket_jornada:       dados.itens[10]?.campos_incorretos?.jornada       || "",
+      ticket_motivo:        dados.itens[10]?.campos_incorretos?.motivo        || "",
+      ticket_status:        dados.itens[10]?.campos_incorretos?.status        || "",
+      ticket_justificativa: dados.itens[10]?.campos_incorretos?.justificativa || "",
+      ticket_area:          dados.itens[10]?.campos_incorretos?.area          || "",
+      ticket_subarea:       dados.itens[10]?.campos_incorretos?.subarea       || "",
+      ticket_obs:           dados.itens[10]?.observacao                       || "",
+    };
+
+    btn.disabled  = true;
+    btn.innerText = "Enviando...";
+    status.style.display      = "block";
+    status.style.background   = "var(--cinza-claro)";
+    status.style.color        = "var(--cinza-medio)";
+    status.innerText          = "Enviando dados para o Google Sheets...";
+
+    try {
+      await fetch(SHEETS_URL, {
+        method: "POST",
+        mode:   "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(linha)
+      });
+
+      // no-cors não retorna status, então assumimos sucesso se não houve erro
+      status.style.background = "rgba(210,38,136,0.08)";
+      status.style.color      = "var(--magenta)";
+      status.innerText        = "✓ Avaliação enviada com sucesso para o Google Sheets!";
+      btn.innerText           = "✓ Enviado";
+    } catch (err) {
+      status.style.background = "rgba(239,148,36,0.10)";
+      status.style.color      = "var(--laranja)";
+      status.innerText        = "⚠ Erro ao enviar. Verifique a URL do Apps Script e tente novamente.";
+      btn.disabled  = false;
+      btn.innerText = "↑ Tentar novamente";
+    }
+  };
+
+
+    const div = document.getElementById("jsonPreview");
+    const visivel = div.style.display === "block";
+    if (!visivel) {
+      document.getElementById("jsonConteudo").innerText = JSON.stringify(coletarJson(), null, 2);
+      div.style.display = "block";
+    } else {
+      div.style.display = "none";
+    }
+  };
+
+  window.baixarJson = function () {
+    const json  = coletarJson();
+    const blob  = new Blob([JSON.stringify(json, null, 2)], { type: "application/json" });
+    const url   = URL.createObjectURL(blob);
+    const a     = document.createElement("a");
+    const fname = `avaliacao_${json.meta.ticket_id || "sem_ticket"}_${new Date().toISOString().slice(0,10)}.json`;
+    a.href = url; a.download = fname; a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  /* ── FECHAR MODAL CLICANDO FORA ── */
+  document.getElementById("modalOverlay").addEventListener("click", function (e) {
+    if (e.target === this) fecharModal();
+  });
+
+});
+</script>
+</body>
+</html>
